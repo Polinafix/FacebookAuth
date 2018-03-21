@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import FacebookCore
+import FacebookLogin
 
 class ViewController: UIViewController {
 
@@ -25,6 +27,23 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     @IBAction func loginWithFacebook(_ sender: UIButton) {
+        //1
+        let loginManager = LoginManager()
+        //2
+        loginManager.logIn(readPermissions: [.publicProfile,.email, .userFriends], viewController: self) { (loginResult) in
+            switch loginResult {
+            case .failed(let error):
+                print(error)
+            case .cancelled:
+                print("The user cancelled login")
+            case .success(grantedPermissions:let granted, declinedPermissions:let declined, token: let token):
+                
+                print(granted, declined, token)
+                
+                print("User logged in")
+                
+            }
+        }
     }
     
 
