@@ -36,15 +36,39 @@ class ViewController: UIViewController {
                 print(error)
             case .cancelled:
                 print("The user cancelled login")
-            case .success(grantedPermissions:let granted, declinedPermissions:let declined, token: let token):
+            case .success(grantedPermissions: _, declinedPermissions: _, token: _):
                 
-                print(granted, declined, token)
+               // print(granted, declined, token)
                 
                 print("User logged in")
+                self.getDetails()
                 
             }
         }
     }
+    
+    //3. Once the user has successfully logged in
+    func getDetails() {
+        
+        //check for the access token:
+        guard let _ = AccessToken.current else{
+            return
+        }
+        let params = ["fields":"name,email,gender,age_range"]
+        
+        let graphRequest = GraphRequest(graphPath: "me", parameters: params)
+        graphRequest.start { (response, requestResult) in
+            switch requestResult {
+            case .failed(let error):
+                print(error)
+            case .success(response: let graphResponse):
+                if let responseDictionary = graphResponse.dictionaryValue {
+                    print(responseDictionary)
+                }
+            }
+        }
+    }
+    
     
 
 }
