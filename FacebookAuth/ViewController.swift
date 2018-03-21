@@ -54,7 +54,7 @@ class ViewController: UIViewController {
         guard let _ = AccessToken.current else{
             return
         }
-        let params = ["fields":"name,email,gender,age_range"]
+        let params = ["fields":"name,gender,picture"]
         
         let graphRequest = GraphRequest(graphPath: "me", parameters: params)
         graphRequest.start { (response, requestResult) in
@@ -63,7 +63,16 @@ class ViewController: UIViewController {
                 print(error)
             case .success(response: let graphResponse):
                 if let responseDictionary = graphResponse.dictionaryValue {
-                    print(responseDictionary)
+                    //print(responseDictionary)
+                    
+                    let name = responseDictionary["name"] as! String
+                    let gender = responseDictionary["gender"] as! String
+                    if let photo = responseDictionary["picture"] as? NSDictionary {
+                        let data = photo["data"] as! NSDictionary
+                        let pictureURL = data["url"] as! String
+                        print(pictureURL)
+                    }
+                    
                 }
             }
         }
