@@ -54,7 +54,7 @@ class ViewController: UIViewController {
         guard let _ = AccessToken.current else{
             return
         }
-        let params = ["fields":"name,gender,picture"]
+        let params = ["fields":"name,gender,picture.width(640).height(480)"]
         
         let graphRequest = GraphRequest(graphPath: "me", parameters: params)
         graphRequest.start { (response, requestResult) in
@@ -71,6 +71,19 @@ class ViewController: UIViewController {
                         let data = photo["data"] as! NSDictionary
                         let pictureURL = data["url"] as! String
                         print(pictureURL)
+                        
+                        //run dowloading the picture in the background
+                        DispatchQueue.global().async {
+                            let imgData = NSData(contentsOf: URL(string: pictureURL)!)
+                            
+                            //get back to the main thread after that
+                            DispatchQueue.main.async {
+                                self.nameLabel.text = name
+                                self.genderLabel.text = gender
+                                let userImage = UIImage(data: imgData! as Data)
+                                self.photoView.image = userImage
+                            }
+                        }
                     }
                     
                 }
